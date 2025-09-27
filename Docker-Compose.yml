@@ -1,0 +1,33 @@
+services:
+  # Spring Boot application service
+  lms-app:
+    build: .
+    container_name: lms-app-container
+    ports:
+      # Maps local port 9018 to container port 9010
+      - "9018:9010"
+    environment:
+      # Spring Boot datasource configuration
+      SPRING_DATASOURCE_URL: jdbc:mysql://lms-db:3306/lms_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      - lms-db
+    restart: always
+
+  # MySQL database service
+  lms-db:
+    image: mysql:8.0
+    container_name: lms-db-container
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: lms_db
+    volumes:
+      - db-data:/var/lib/mysql
+    restart: always
+
+# Volume for persistent MySQL data
+volumes:
+  db-data:
